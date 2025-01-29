@@ -23,7 +23,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/flathub-infra/flatpak-builder-lint:latest
+      image: ghcr.io/flathub-infra/flatpak-builder-lint:latest-amd64
       options: --privileged
 
     steps:
