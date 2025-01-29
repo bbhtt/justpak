@@ -47,6 +47,7 @@ jobs:
           echo "REF=${{ github.event.client_payload.ref }}" >> $GITHUB_ENV
           echo "BUILD_URL=https://hub.flathub.org/api/v1/build/${{ github.event.client_payload.build_url }}" >> $GITHUB_ENV
           echo "HOME=/home/flatbld" >> $GITHUB_ENV
+          echo "TMPDIR=/__w/_temp" >> $GITHUB_ENV
 
       - name: Set variables from manual trigger
         if: github.event_name == 'workflow_dispatch'
@@ -57,8 +58,10 @@ jobs:
           echo "REF=${{ github.event.inputs.ref }}" >> $GITHUB_ENV
           echo "BUILD_URL=https://hub.flathub.org/api/v1/build/${{ github.event.inputs.build_url }}" >> $GITHUB_ENV
           echo "HOME=/home/flatbld" >> $GITHUB_ENV
+          echo "TMPDIR=/__w/_temp" >> $GITHUB_ENV
 
-      - run: |
+      - name: Fetch justfile
+        run: |
           curl https://raw.githubusercontent.com/barthalion/justpak/refs/heads/main/justfile -o justfile
 
       - name: Checkout repository
