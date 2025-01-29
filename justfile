@@ -34,7 +34,7 @@ prepare-env:
     set -euxo pipefail
     flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
     flatpak remote-add --user --if-not-exists flathub-beta https://dl.flathub.org/beta-repo/flathub-beta.flatpakrepo
-    flatpak install --install-or-update --user flathub org.flatpak.Builder --noninteractive
+    flatpak install --or-update --user flathub org.flatpak.Builder --noninteractive
 
 validate-manifest app_id:
     #!/usr/bin/env bash
