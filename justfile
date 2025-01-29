@@ -53,7 +53,7 @@ build app_id branch="stable":
         deps_args="$deps_args --install-deps-from=flathub-beta"
     fi
 
-    flatpak run org.flatpak.Builder -v \
+    dbus-run-session flatpak run org.flatpak.Builder -v \
         --force-clean --sandbox --delete-build-dirs \
         --user $deps_args \
         --mirror-screenshots-url=https://dl.flathub.org/media \
