@@ -46,9 +46,8 @@ build app_id branch="stable":
     set -euxo pipefail
     
     manifest=$(just _get_manifest {{app_id}})
-    subject=$(just _get_subject)
+    subject=$(just _get_build_subject)
     
-    # Setup dependencies arguments
     deps_args="--install-deps-from=flathub"
     if [ "{{branch}}" = "beta" ] || [ "{{branch}}" = "test" ]; then
         deps_args="$deps_args --install-deps-from=flathub-beta"
