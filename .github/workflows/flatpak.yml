@@ -47,6 +47,10 @@ jobs:
           echo "REF=${{ github.event.inputs.ref }}" >> $GITHUB_ENV
           echo "BUILD_URL=https://hub.flathub.org/api/v1/build/${{ github.event.inputs.build_url }}" >> $GITHUB_ENV
 
+      - name: "we can't have nice things"
+        run: |
+          ls -lha /app/bin/
+
       - name: Checkout repository
         run: just checkout $REPO $REF
 
