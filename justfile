@@ -33,13 +33,12 @@ prepare-env:
     set -euxo pipefail
     flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
     flatpak remote-add --user --if-not-exists flathub-beta https://dl.flathub.org/beta-repo/flathub-beta.flatpakrepo
-    flatpak install --or-update --user flathub org.flatpak.Builder --noninteractive
 
 validate-manifest app_id:
     #!/usr/bin/env bash
     set -euxo pipefail
     manifest=$(just _get_manifest {{app_id}})
-    flatpak-builder-lint org.flatpak.Builder --exceptions manifest "$manifest"
+    flatpak-builder-lint --exceptions manifest "$manifest"
 
 build app_id branch="stable":
     #!/usr/bin/env bash
@@ -53,7 +52,7 @@ build app_id branch="stable":
         deps_args="$deps_args --install-deps-from=flathub-beta"
     fi
 
-    dbus-run-session flatpak run org.flatpak.Builder -v \
+    flatpak-builder -v \
         --force-clean --sandbox --delete-build-dirs \
         --user $deps_args \
         --mirror-screenshots-url=https://dl.flathub.org/media \
@@ -72,7 +71,7 @@ commit-screenshots:
 validate-build:
     #!/usr/bin/env bash
     set -euxo pipefail
-    flatpak-builder-lint org.flatpak.Builder --exceptions repo repo
+    flatpak-builder-lint --exceptions repo repo
 
 generate-deltas:
     #!/usr/bin/env bash
@@ -82,4 +81,4 @@ generate-deltas:
 upload url:
     #!/usr/bin/env bash
     set -euxo pipefail
-    flat-manager-client org.flatpak.Builder push "{{url}}" repo
+    flat-manager-client push "{{url}}" repo
