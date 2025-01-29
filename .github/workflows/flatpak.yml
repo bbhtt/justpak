@@ -27,11 +27,12 @@ jobs:
       image: ghcr.io/flathub-infra/flatpak-builder-lint:latest-amd64
       options: --privileged
 
-    steps:
-      - run: |
-          ln -s /__w/_temp /var/tmp
+    defaults:
+      run:
+        working-directory: /home/flatbld
 
-      - uses: actions/checkout@v3
+    steps:
+      - uses: actions/checkout@v4
 
       - name: Set variables from dispatch event
         if: github.event_name == 'repository_dispatch'
