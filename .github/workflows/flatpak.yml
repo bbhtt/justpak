@@ -27,17 +27,12 @@ jobs:
       image: ghcr.io/flathub-infra/flatpak-builder-lint:latest-amd64
       options: --privileged
 
-    defaults:
-      run:
-        working-directory: ./build
-
     steps:
       - uses: actions/checkout@v3
 
       - name: Set variables from dispatch event
         if: github.event_name == 'repository_dispatch'
         run: |
-          echo "JUST_JUSTFILE=$PWD/Justfile" >> $GITHUB_ENV
           echo "APP_ID=${{ github.event.client_payload.app_id }}" >> $GITHUB_ENV
           echo "BRANCH=${{ github.event.client_payload.branch }}" >> $GITHUB_ENV
           echo "REPO=https://github.com/flathub/${{ github.event.client_payload.app_id }}" >> $GITHUB_ENV
@@ -47,7 +42,6 @@ jobs:
       - name: Set variables from manual trigger
         if: github.event_name == 'workflow_dispatch'
         run: |
-          echo "JUST_JUSTFILE=$PWD/Justfile" >> $GITHUB_ENV
           echo "APP_ID=${{ github.event.inputs.app_id }}" >> $GITHUB_ENV
           echo "BRANCH=${{ github.event.inputs.branch }}" >> $GITHUB_ENV
           echo "REPO=https://github.com/flathub/${{ github.event.inputs.app_id }}" >> $GITHUB_ENV
@@ -56,28 +50,36 @@ jobs:
 
       - run: |
           mkdir -p build
-        working-directory: .
+          ln -s "$(pwd)/justfile" build/justfile
 
       - name: Checkout repository
         run: just checkout $REPO $REF
+        working-directory: ./build
 
       - name: Prepare environment
         run: just prepare-env
+        working-directory: ./build
 
       - name: Validate manifest
         run: just validate-manifest $APP_ID
+        working-directory: ./build
 
       - name: Build Flatpak
         run: just build $APP_ID $BRANCH
+        working-directory: ./build
 
       - name: Commit screenshots
         run: just commit-screenshots
+        working-directory: ./build
 
       - name: Validate build
         run: just validate-build
+        working-directory: ./build
 
       - name: Generate deltas
         run: just generate-deltas
+        working-directory: ./build
 
       - name: Upload build
         run: just upload $BUILD_URL
+        working-directory: ./build

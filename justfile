@@ -1,6 +1,7 @@
 _get_manifest app_id:
     #!/usr/bin/env bash
-    set -euo pipefail
+    set -euxo pipefail
+    echo $PWD
     if [ -f "{{app_id}}.json" ]; then
         echo "{{app_id}}.json"
     elif [ -f "{{app_id}}.yaml" ]; then
@@ -14,32 +15,32 @@ _get_manifest app_id:
 
 _get_build_subject:
     #!/usr/bin/env bash
-    set -euo pipefail
+    set -euxo pipefail
     commit_msg=$(git log -1 --pretty=%s)
     commit_hash=$(git rev-parse --short=12 HEAD)
     echo "$commit_msg ($commit_hash)"
 
 checkout repo ref:
     #!/usr/bin/env bash
-    set -euo pipefail
+    set -euxo pipefail
     git clone --depth 1 --recurse-submodules --shallow-submodules -b {{ref}} {{repo}} .
 
 prepare-env:
     #!/usr/bin/env bash
-    set -euo pipefail
+    set -euxo pipefail
     flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
     flatpak remote-add --user --if-not-exists flathub-beta https://dl.flathub.org/beta-repo/flathub-beta.flatpakrepo
     flatpak install --install-or-update --user flathub org.flatpak.Builder --noninteractive
 
 validate-manifest app_id:
     #!/usr/bin/env bash
-    set -euo pipefail
+    set -euxo pipefail
     manifest=$(just _get_manifest {{app_id}})
     flatpak run --command=flatpak-builder-lint org.flatpak.Builder manifest "$manifest"
 
 build app_id branch="stable":
     #!/usr/bin/env bash
-    set -euo pipefail
+    set -euxo pipefail
     
     manifest=$(just _get_manifest {{app_id}})
     subject=$(just _get_subject)
@@ -62,21 +63,21 @@ build app_id branch="stable":
 
 commit-screenshots:
     #!/usr/bin/env bash
-    set -euo pipefail
+    set -euxo pipefail
     mkdir -p builddir/files/share/app-info/media
     ostree commit --repo=repo --canonical-permissions --branch=screenshots/{{arch()}} builddir/files/share/app-info/media
 
 validate-build:
     #!/usr/bin/env bash
-    set -euo pipefail
+    set -euxo pipefail
     flatpak run --command=flatpak-builder-lint org.flatpak.Builder --exceptions repo repo
 
 generate-deltas:
     #!/usr/bin/env bash
-    set -euo pipefail
+    set -euxo pipefail
     flatpak build-update-repo --generate-static-deltas --static-delta-ignore-ref=*.Debug --static-delta-ignore-ref=*.Sources repo
 
 upload url:
     #!/usr/bin/env bash
-    set -euo pipefail
+    set -euxo pipefail
     flatpak run --command=flat-manager-client org.flatpak.Builder push "{{url}}" repo
