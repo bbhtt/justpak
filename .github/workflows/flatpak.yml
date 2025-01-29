@@ -35,6 +35,9 @@ jobs:
         working-directory: /home/flatbld
 
     steps:
+      - run: |
+          pwd
+
       - name: Set variables from dispatch event
         if: github.event_name == 'repository_dispatch'
         run: |
