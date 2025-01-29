@@ -29,7 +29,6 @@ jobs:
 
     steps:
       - run: |
-          whoami
           ln -s /__w/_temp /var/tmp
 
       - uses: actions/checkout@v3
