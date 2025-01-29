@@ -39,7 +39,7 @@ validate-manifest app_id:
     #!/usr/bin/env bash
     set -euxo pipefail
     manifest=$(just _get_manifest {{app_id}})
-    flatpak run --command=flatpak-builder-lint org.flatpak.Builder --exceptions manifest "$manifest"
+    flatpak-builder-lint org.flatpak.Builder --exceptions manifest "$manifest"
 
 build app_id branch="stable":
     #!/usr/bin/env bash
@@ -72,7 +72,7 @@ commit-screenshots:
 validate-build:
     #!/usr/bin/env bash
     set -euxo pipefail
-    flatpak run --command=flatpak-builder-lint org.flatpak.Builder --exceptions repo repo
+    flatpak-builder-lint org.flatpak.Builder --exceptions repo repo
 
 generate-deltas:
     #!/usr/bin/env bash
@@ -82,4 +82,4 @@ generate-deltas:
 upload url:
     #!/usr/bin/env bash
     set -euxo pipefail
-    flatpak run --command=flat-manager-client org.flatpak.Builder push "{{url}}" repo
+    flat-manager-client org.flatpak.Builder push "{{url}}" repo
