@@ -30,6 +30,8 @@ jobs:
       options: --privileged
 
     steps:
+      - uses: actions/checkout@v3
+
       - name: Set variables from dispatch event
         if: github.event_name == 'repository_dispatch'
         run: |
