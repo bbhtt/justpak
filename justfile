@@ -55,6 +55,7 @@ build app_id branch="stable":
     flatpak-builder -v \
         --force-clean --sandbox --delete-build-dirs \
         --user $deps_args \
+        --disable-rofiles-fuse \
         --mirror-screenshots-url=https://dl.flathub.org/media \
         --repo repo \
         --extra-sources=./downloads \
