@@ -23,7 +23,11 @@ _get_build_subject:
 checkout repo ref:
     #!/usr/bin/env bash
     set -euxo pipefail
-    git clone --depth 1 --recurse-submodules --shallow-submodules -b {{ref}} {{repo}} .
+    git init
+    git remote add origin {{repo}}
+    git fetch --depth 1 origin {{ref}}
+    git checkout FETCH_HEAD
+    git submodule update --init --recursive --depth 1
 
 prepare-env:
     #!/usr/bin/env bash
