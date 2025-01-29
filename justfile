@@ -1,3 +1,6 @@
+default:
+  just --list
+
 _get_manifest app_id:
     #!/usr/bin/env bash
     set -euxo pipefail
@@ -43,10 +46,10 @@ validate-manifest app_id:
 build app_id branch="stable":
     #!/usr/bin/env bash
     set -euxo pipefail
-    
+
     manifest=$(just _get_manifest {{app_id}})
     subject=$(just _get_build_subject)
-    
+
     deps_args="--install-deps-from=flathub"
     if [ "{{branch}}" = "beta" ] || [ "{{branch}}" = "test" ]; then
         deps_args="$deps_args --install-deps-from=flathub-beta"
