@@ -1,7 +1,6 @@
 _get_manifest app_id:
     #!/usr/bin/env bash
     set -euxo pipefail
-    echo $PWD
     if [ -f "{{app_id}}.json" ]; then
         echo "{{app_id}}.json"
     elif [ -f "{{app_id}}.yaml" ]; then
