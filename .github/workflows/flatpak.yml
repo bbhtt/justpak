@@ -35,6 +35,11 @@ jobs:
         working-directory: /home/flatbld
 
     steps:
+      - run: |
+          stat $HOME
+          stat /__w
+          stat /__w/_temp/
+
       - uses: actions/checkout@v4
 
       - name: Set variables from dispatch event
