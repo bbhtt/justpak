@@ -6,16 +6,19 @@ on:
       app_id:
         description: 'Application ID'
         required: true
+        default: org.vim.Vim
       branch:
         description: 'Build branch (stable/beta/test)'
         required: true
-        default: 'stable'
+        default: stable
       ref:
         description: 'Git reference'
         required: true
+        default: master
       build_url:
         description: 'Build ID'
         required: true
+        default: "0"
   repository_dispatch:
     types: [build-flatpak]
 
