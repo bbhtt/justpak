@@ -39,7 +39,7 @@ validate-manifest app_id:
     #!/usr/bin/env bash
     set -euxo pipefail
     manifest=$(just _get_manifest {{app_id}})
-    flatpak run --command=flatpak-builder-lint org.flatpak.Builder manifest "$manifest"
+    flatpak run --command=flatpak-builder-lint org.flatpak.Builder --exceptions manifest "$manifest"
 
 build app_id branch="stable":
     #!/usr/bin/env bash
