@@ -29,9 +29,8 @@ jobs:
 
     steps:
       - run: |
-          stat /var/tmp 
-          stat /tmp
-          mount
+          whoami
+          ln -s /__w/_temp /var/tmp
 
       - uses: actions/checkout@v3
 
