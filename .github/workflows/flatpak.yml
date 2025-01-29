@@ -33,7 +33,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-        working-directory: .
 
       - name: Set variables from dispatch event
         if: github.event_name == 'repository_dispatch'
