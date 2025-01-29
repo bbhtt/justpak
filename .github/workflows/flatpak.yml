@@ -28,6 +28,11 @@ jobs:
       options: --privileged
 
     steps:
+      - run: |
+          stat /var/tmp 
+          stat /tmp
+          mount
+
       - uses: actions/checkout@v3
 
       - name: Set variables from dispatch event
