@@ -10,14 +10,11 @@ on:
         description: 'Build branch (stable/beta/test)'
         required: true
         default: 'stable'
-      repo:
-        description: 'Repository URL'
-        required: true
       ref:
-        description: 'git ref'
+        description: 'Git reference'
         required: true
       build_url:
-        description: 'flat-manager build URL'
+        description: 'Build ID'
         required: true
   repository_dispatch:
     types: [build-flatpak]
@@ -37,22 +34,18 @@ jobs:
         run: |
           echo "APP_ID=${{ github.event.client_payload.app_id }}" >> $GITHUB_ENV
           echo "BRANCH=${{ github.event.client_payload.branch }}" >> $GITHUB_ENV
-          echo "REPO=${{ github.event.client_payload.repo }}" >> $GITHUB_ENV
+          echo "REPO=https://github.com/flathub/${{ github.event.client_payload.app_id }}" >> $GITHUB_ENV
           echo "REF=${{ github.event.client_payload.ref }}" >> $GITHUB_ENV
-          echo "BUILD_URL=${{ github.event.client_payload.build_url }}" >> $GITHUB_ENV
+          echo "BUILD_URL=https://hub.flathub.org/api/v1/build/${{ github.event.client_payload.build_url }}" >> $GITHUB_ENV
 
       - name: Set variables from manual trigger
         if: github.event_name == 'workflow_dispatch'
         run: |
           echo "APP_ID=${{ github.event.inputs.app_id }}" >> $GITHUB_ENV
           echo "BRANCH=${{ github.event.inputs.branch }}" >> $GITHUB_ENV
-          echo "REPO=${{ github.event.inputs.repo }}" >> $GITHUB_ENV
+          echo "REPO=https://github.com/flathub/${{ github.event.inputs.app_id }}" >> $GITHUB_ENV
           echo "REF=${{ github.event.inputs.ref }}" >> $GITHUB_ENV
-          echo "BUILD_URL=${{ github.event.inputs.build_url }}" >> $GITHUB_ENV
-
-      - name: Install Just
-        run: |
-          curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/local/bin
+          echo "BUILD_URL=https://hub.flathub.org/api/v1/build/${{ github.event.inputs.build_url }}" >> $GITHUB_ENV
 
       - name: Checkout repository
         run: just checkout $REPO $REF
