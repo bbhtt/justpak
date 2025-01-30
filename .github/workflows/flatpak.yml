@@ -23,7 +23,7 @@ on:
         required: true
         default: "0"
       runners:
-        description: 'Comma-separated runner configs (e.g. "ubuntu-24.04,[self-hosted,linux,ARM64]")'
+        description: 'Comma-separated runs-on values'
         required: true
         default: 'ubuntu-24.04,ubuntu-24.04-arm'
       repo_token:
