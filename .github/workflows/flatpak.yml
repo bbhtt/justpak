@@ -32,8 +32,8 @@ jobs:
 
     steps:
       - run: |
-          whoami
           pwd
+          stat $(pwd)
 
       - name: Set variables from dispatch event
         if: github.event_name == 'repository_dispatch'
