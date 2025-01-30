@@ -24,12 +24,11 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     container:
       image: ghcr.io/flathub-infra/flatpak-builder-lint:latest-amd64
       options: --privileged
-
     defaults:
       run:
         working-directory: /home/flatbld
