@@ -38,7 +38,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        runner: ${{ fromJSON(format('[\"%s\"]', replace(github.event_name == 'repository_dispatch' && join(github.event.client_payload.runners, '\",\"') || github.event.inputs.runners, ',', '\",\"'))) }}
+        runner: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.runners || split(github.event.inputs.runners, ',') }}
     name: Build flatpak (${{ matrix.runner }})
     runs-on: ${{ matrix.runner }}
 
