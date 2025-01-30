@@ -42,6 +42,10 @@ jobs:
     name: Build flatpak (${{ matrix.runner }})
     runs-on: ${{ matrix.runner }}
 
+    container:
+      image: ghcr.io/flathub-infra/flatpak-builder-lint:latest
+      options: --privileged
+
     steps:
       - name: Set variables from dispatch event
         if: github.event_name == 'repository_dispatch'
@@ -52,7 +56,6 @@ jobs:
           echo "REF=${{ github.event.client_payload.ref }}" >> $GITHUB_ENV
           echo "BUILD_URL=https://hub.flathub.org/api/v1/build/${{ github.event.client_payload.build_url }}" >> $GITHUB_ENV
           echo "::add-mask::${{ github.event.client_payload.repo_token }}"
-          echo "REPO_TOKEN=${{ github.event.client_payload.repo_token }}" >> $GITHUB_ENV
 
       - name: Set variables from manual trigger
         if: github.event_name == 'workflow_dispatch'
@@ -63,48 +66,35 @@ jobs:
           echo "REF=${{ github.event.inputs.ref }}" >> $GITHUB_ENV
           echo "BUILD_URL=https://hub.flathub.org/api/v1/build/${{ github.event.inputs.build_url }}" >> $GITHUB_ENV
           echo "::add-mask::${{ github.event.inputs.repo_token }}"
-          echo "REPO_TOKEN=${{ github.event.inputs.repo_token }}" >> $GITHUB_ENV
 
-      - name: Create work directory
+      - name: Fetch justfile
         run: |
-          mkdir -p ${GITHUB_WORKSPACE}/work
-          chmod 777 ${GITHUB_WORKSPACE}/work
+          curl https://raw.githubusercontent.com/barthalion/justpak/refs/heads/main/justfile -o justfile
 
-      - name: Free up disk space
+      - name: Checkout repository
         run: |
-          sudo rm -rf /opt/* /usr/local/.ghcup /swapfile
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /usr/share/dotnet /usr/share/swift
-          sudo rm -rf /usr/local/share/boost /usr/local/share/powershell
-          sudo rm -rf /usr/lib/google-cloud-sdk /usr/lib/jvm
-          sudo apt-get clean
-          sudo rm -rf /var/lib/apt/lists/*
+          git config --global --add safe.directory /__w/justpak/justpak
+          just checkout $REPO $REF
 
-      - name: Run build process
-        working-directory: ${{ github.workspace }}/work
-        run: |
-          docker run --rm --privileged \
-            -v "${GITHUB_WORKSPACE}/work:/work" \
-            -w /work \
-            -e APP_ID \
-            -e BRANCH \
-            -e REPO \
-            -e REF \
-            -e BUILD_URL \
-            -e REPO_TOKEN \
-            -e GITHUB_WORKSPACE=/work \
-            ghcr.io/flathub-infra/flatpak-builder-lint:latest \
-            /bin/bash -c '
-              set -ex
-              cd /work
-              curl https://raw.githubusercontent.com/barthalion/justpak/refs/heads/main/justfile -o justfile
-              git config --global --add safe.directory /work
-              just checkout $REPO $REF
-              just prepare-env
-              just validate-manifest $APP_ID
-              just build $APP_ID $BRANCH
-              just commit-screenshots
-              just validate-build
-              just generate-deltas
-              just upload $BUILD_URL
-            '
+      - name: Prepare environment
+        run: just prepare-env
+
+      - name: Validate manifest
+        run: just validate-manifest $APP_ID
+
+      - name: Build flatpak
+        run: just build $APP_ID $BRANCH
+
+      - name: Commit screenshots
+        run: just commit-screenshots
+
+      - name: Validate build
+        run: just validate-build
+
+      - name: Generate deltas
+        run: just generate-deltas
+
+      - name: Upload build
+        env:
+          REPO_TOKEN: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.repo_token || github.event.inputs.repo_token }}
+        run: just upload $BUILD_URL
