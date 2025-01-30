@@ -23,9 +23,9 @@ on:
         required: true
         default: "0"
       runners:
-        description: 'Comma-separated runs-on values'
+        description: 'JSON array of runners (e.g. ["ubuntu-24.04","ubuntu-24.04-arm"])'
         required: true
-        default: 'ubuntu-24.04,ubuntu-24.04-arm'
+        default: '["ubuntu-24.04"]'
       repo_token:
         description: 'Repository token'
         required: true
@@ -38,7 +38,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        runner: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.runners || split(github.event.inputs.runners, ',') }}
+        runner: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.runners || fromJSON(github.event.inputs.runners) }}
     name: Build flatpak (${{ matrix.runner }})
     runs-on: ${{ matrix.runner }}
 
