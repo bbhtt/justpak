@@ -32,7 +32,7 @@ jobs:
 
     steps:
       - run: |
-          git config --global --add safe.directory $HOME
+          git config --global --add safe.directory /__w
 
       - name: Set variables from dispatch event
         if: github.event_name == 'repository_dispatch'
