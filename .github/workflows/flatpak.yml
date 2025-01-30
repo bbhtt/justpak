@@ -31,9 +31,6 @@ jobs:
       options: --privileged
 
     steps:
-      - run: |
-          pwd
-
       - name: Set variables from dispatch event
         if: github.event_name == 'repository_dispatch'
         run: |
@@ -42,8 +39,6 @@ jobs:
           echo "REPO=https://github.com/flathub/${{ github.event.client_payload.app_id }}" >> $GITHUB_ENV
           echo "REF=${{ github.event.client_payload.ref }}" >> $GITHUB_ENV
           echo "BUILD_URL=https://hub.flathub.org/api/v1/build/${{ github.event.client_payload.build_url }}" >> $GITHUB_ENV
-          echo "HOME=/home/flatbld" >> $GITHUB_ENV
-          echo "TMPDIR=/__w/_temp" >> $GITHUB_ENV
 
       - name: Set variables from manual trigger
         if: github.event_name == 'workflow_dispatch'
@@ -53,8 +48,6 @@ jobs:
           echo "REPO=https://github.com/flathub/${{ github.event.inputs.app_id }}" >> $GITHUB_ENV
           echo "REF=${{ github.event.inputs.ref }}" >> $GITHUB_ENV
           echo "BUILD_URL=https://hub.flathub.org/api/v1/build/${{ github.event.inputs.build_url }}" >> $GITHUB_ENV
-          echo "HOME=/home/flatbld" >> $GITHUB_ENV
-          echo "TMPDIR=/__w/_temp" >> $GITHUB_ENV
 
       - name: Fetch justfile
         run: |
