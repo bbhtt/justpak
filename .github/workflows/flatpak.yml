@@ -22,10 +22,10 @@ on:
         description: 'Build ID'
         required: true
         default: "0"
-      runs_on:
-        description: 'Runner to use'
+      runners:
+        description: 'Comma-separated runner configs (e.g. "ubuntu-24.04,[self-hosted,linux,ARM64]")'
         required: true
-        default: ubuntu-24.04
+        default: 'ubuntu-24.04,ubuntu-24.04-arm'
       repo_token:
         description: 'Repository token'
         required: true
@@ -35,8 +35,12 @@ on:
 
 jobs:
   build:
-    name: Build flatpak
-    runs-on: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.runs_on || github.event.inputs.runs_on }}
+    strategy:
+      fail-fast: true
+      matrix:
+        runner: ${{ fromJSON(format('[[{0}]]', github.event_name == 'repository_dispatch' && join(github.event.client_payload.runners, '],[') || github.event.inputs.runners)) }}
+    name: Build flatpak (${{ join(matrix.runner, ',') }})
+    runs-on: ${{ matrix.runner }}
 
     container:
       image: ghcr.io/flathub-infra/flatpak-builder-lint:latest
