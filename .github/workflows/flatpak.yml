@@ -132,7 +132,10 @@ jobs:
             -e APP_ID \
             -e BRANCH \
             ghcr.io/flathub-infra/flatpak-builder-lint:latest \
-            just build $APP_ID $BRANCH
+            /bin/bash -c '
+              git config --global --add safe.directory "*"
+              just build $APP_ID $BRANCH
+            '
 
       - name: Commit screenshots
         run: |
