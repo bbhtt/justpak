@@ -27,12 +27,8 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/flathub-infra/flatpak-builder-lint:latest-amd64
+      image: ghcr.io/flathub-infra/flatpak-builder-lint:latest
       options: --privileged
-
-    defaults:
-      run:
-        working-directory: /home/flatbld
 
     steps:
       - run: |
