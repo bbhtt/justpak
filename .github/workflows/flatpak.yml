@@ -36,7 +36,7 @@ on:
 jobs:
   build:
     strategy:
-      fail-fast: true
+      #fail-fast: true
       matrix:
         runner: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.runners || fromJSON(github.event.inputs.runners) }}
     name: Build flatpak (${{ matrix.runner }})
