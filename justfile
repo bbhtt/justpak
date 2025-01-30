@@ -25,6 +25,7 @@ _get_build_subject:
 checkout repo ref:
     #!/usr/bin/env bash
     set -euxo pipefail
+    git config --global --add safe.directory "$(pwd)"
     git init
     git remote add origin {{repo}}
     git fetch --depth 1 origin {{ref}}
