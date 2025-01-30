@@ -31,9 +31,6 @@ jobs:
       options: --privileged
 
     steps:
-      - run: |
-          git config --global --add safe.directory /__w
-
       - name: Set variables from dispatch event
         if: github.event_name == 'repository_dispatch'
         run: |
@@ -57,7 +54,9 @@ jobs:
           curl https://raw.githubusercontent.com/barthalion/justpak/refs/heads/main/justfile -o justfile
 
       - name: Checkout repository
-        run: just checkout $REPO $REF
+        run: |
+          git config --global --add safe.directory /__w/justpak/justpak
+          just checkout $REPO $REF
 
       - name: Prepare environment
         run: just prepare-env
