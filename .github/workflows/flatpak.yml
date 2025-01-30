@@ -31,6 +31,10 @@ jobs:
       options: --privileged
 
     steps:
+      - run: |
+          whoami
+          pwd
+
       - name: Set variables from dispatch event
         if: github.event_name == 'repository_dispatch'
         run: |
