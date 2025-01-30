@@ -1,4 +1,5 @@
-name: >-
+name: Build flatpak
+run-name: >-
   Build ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.app_id || github.event.inputs.app_id }}
   (${{ github.event_name == 'repository_dispatch' && github.event.client_payload.runs_on || github.event.inputs.runs_on }})
 
