@@ -26,6 +26,7 @@ on:
       repo_token:
         description: 'Repository token'
         required: true
+        default: foo
   repository_dispatch:
     types: [build-flatpak]
 
