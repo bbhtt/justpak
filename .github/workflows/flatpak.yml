@@ -1,6 +1,4 @@
-name: >-
-  Build ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.app_id || github.event.inputs.app_id }}
-  (${{ github.event_name == 'repository_dispatch' && github.event.client_payload.runs_on || github.event.inputs.runs_on }})
+name: Build flatpak
 
 on:
   workflow_dispatch:
@@ -34,7 +32,9 @@ on:
 
 jobs:
   build:
-    name: Build flatpak
+    name: >-
+      Build ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.app_id || github.event.inputs.app_id }}
+      (${{ github.event_name == 'repository_dispatch' && github.event.client_payload.runs_on || github.event.inputs.runs_on }})
     runs-on: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.runs_on || github.event.inputs.runs_on }}
 
     container:
@@ -77,7 +77,7 @@ jobs:
       - name: Validate manifest
         run: just validate-manifest $APP_ID
 
-      - name: Build flatpak
+      - name: Build Flatpak
         run: just build $APP_ID $BRANCH
 
       - name: Commit screenshots
