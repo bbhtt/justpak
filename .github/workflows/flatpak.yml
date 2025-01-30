@@ -100,7 +100,7 @@ jobs:
             -e REF \
             ghcr.io/flathub-infra/flatpak-builder-lint:latest \
             /bin/bash -c '
-              git config --global --add safe.directory /work
+              git config --global --add safe.directory "*"
               just checkout $REPO $REF
             '
 
