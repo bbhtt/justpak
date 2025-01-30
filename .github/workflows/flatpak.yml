@@ -104,15 +104,6 @@ jobs:
               just checkout $REPO $REF
             '
 
-      - name: Prepare environment
-        run: |
-          docker run --rm --privileged \
-            --entrypoint="" \
-            -v "${GITHUB_WORKSPACE}/work:/work" \
-            -w /work \
-            ghcr.io/flathub-infra/flatpak-builder-lint:latest \
-            just prepare-env
-
       - name: Validate manifest
         run: |
           docker run --rm --privileged \
@@ -134,6 +125,7 @@ jobs:
             ghcr.io/flathub-infra/flatpak-builder-lint:latest \
             /bin/bash -c '
               git config --global --add safe.directory "*"
+              just prepare-env
               just build $APP_ID $BRANCH
             '
 
