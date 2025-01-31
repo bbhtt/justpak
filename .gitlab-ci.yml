@@ -13,6 +13,7 @@ variables:
     REPO: https://github.com/flathub/${APP_ID}
     TMPDIR: ${CI_PROJECT_DIR}/tmp
   script:
+    - git config --global --add safe.directory "*"
     - mkdir -p ${TMPDIR}
     - APP_ID=${APP_ID:-org.vim.Vim}
     - REF=${REF:-master}
