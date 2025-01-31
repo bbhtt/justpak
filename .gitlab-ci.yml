@@ -9,6 +9,7 @@ variables:
   image: ghcr.io/flathub-infra/flatpak-builder-lint:unprivileged
   variables:
     REPO: https://github.com/flathub/${APP_ID}
+  entrypoint: [""]
   script:
     - curl https://raw.githubusercontent.com/barthalion/justpak/refs/heads/main/justfile -o justfile
     - just checkout $REPO $REF
