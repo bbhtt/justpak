@@ -13,6 +13,7 @@ variables:
     REPO: https://github.com/flathub/${APP_ID}
     TMPDIR: ${CI_PROJECT_DIR}/tmp
   script:
+    - rm -rf .git
     - git config --global --add safe.directory "*"
     - mkdir -p ${TMPDIR}
     - curl https://raw.githubusercontent.com/barthalion/justpak/refs/heads/main/justfile -o justfile
