@@ -2,6 +2,8 @@ name: Build flatpak
 run-name: >-
   Build ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.app_id || github.event.inputs.app_id }}
 
+env:
+  IMAGE: ghcr.io/bbhtt/flatpak-builder-lint:latest
 
 on:
   workflow_dispatch:
@@ -9,7 +11,7 @@ on:
       app_id:
         description: 'Application ID'
         required: true
-        default: org.vim.Vim
+        default: io.github.lo2dev.Echo
       branch:
         description: 'Build branch (stable/beta/test)'
         required: true
@@ -70,24 +72,13 @@ jobs:
           mkdir -p ${GITHUB_WORKSPACE}/work
           chmod 777 ${GITHUB_WORKSPACE}/work
 
-      - name: Free up disk space
-        run: |
-          sudo rm -rf /opt/* /usr/local/.ghcup || true
-          sudo rm -rf /swapfile || true
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /usr/share/dotnet /usr/share/swift
-          sudo rm -rf /usr/local/share/boost /usr/local/share/powershell
-          sudo rm -rf /usr/lib/google-cloud-sdk /usr/lib/jvm
-          sudo apt-get clean
-          sudo rm -rf /var/lib/apt/lists/*
-
       - name: Download justfile
         run: |
           docker run --rm --privileged \
             --entrypoint="" \
             -v "${GITHUB_WORKSPACE}/work:/work" \
             -w /work \
-            ghcr.io/flathub-infra/flatpak-builder-lint:latest \
+            ${{ env.IMAGE }} \
             curl https://raw.githubusercontent.com/barthalion/justpak/refs/heads/main/justfile -o justfile
 
       - name: Checkout repository
@@ -98,8 +89,10 @@ jobs:
             -w /work \
             -e REPO \
             -e REF \
-            ghcr.io/flathub-infra/flatpak-builder-lint:latest \
+            ${{ env.IMAGE }} \
             /bin/bash -c '
+              mkdir -p /root/
+              touch /root/.gitconfig
               git config --global --add safe.directory "*"
               just checkout $REPO $REF
             '
@@ -111,7 +104,7 @@ jobs:
             -v "${GITHUB_WORKSPACE}/work:/work" \
             -w /work \
             -e APP_ID \
-            ghcr.io/flathub-infra/flatpak-builder-lint:latest \
+            ${{ env.IMAGE }} \
             just validate-manifest $APP_ID
 
       - name: Build flatpak
@@ -122,7 +115,7 @@ jobs:
             -w /work \
             -e APP_ID \
             -e BRANCH \
-            ghcr.io/flathub-infra/flatpak-builder-lint:latest \
+            ${{ env.IMAGE }} \
             /bin/bash -c '
               git config --global --add safe.directory "*"
               just prepare-env
@@ -135,7 +128,7 @@ jobs:
             --entrypoint="" \
             -v "${GITHUB_WORKSPACE}/work:/work" \
             -w /work \
-            ghcr.io/flathub-infra/flatpak-builder-lint:latest \
+            ${{ env.IMAGE }} \
             just commit-screenshots
 
       - name: Validate build
@@ -144,7 +137,7 @@ jobs:
             --entrypoint="" \
             -v "${GITHUB_WORKSPACE}/work:/work" \
             -w /work \
-            ghcr.io/flathub-infra/flatpak-builder-lint:latest \
+            ${{ env.IMAGE }} \
             just validate-build
 
       - name: Generate deltas
@@ -153,7 +146,7 @@ jobs:
             --entrypoint="" \
             -v "${GITHUB_WORKSPACE}/work:/work" \
             -w /work \
-            ghcr.io/flathub-infra/flatpak-builder-lint:latest \
+            ${{ env.IMAGE }} \
             just generate-deltas
 
       - name: Upload build
@@ -164,5 +157,5 @@ jobs:
             -w /work \
             -e BUILD_URL \
             -e REPO_TOKEN \
-            ghcr.io/flathub-infra/flatpak-builder-lint:latest \
+            ${{ env.IMAGE }} \
             just upload $BUILD_URL
